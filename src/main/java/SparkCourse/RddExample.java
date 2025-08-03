@@ -43,6 +43,16 @@ public class RddExample {
             }
             System.out.println();
         }
+
+        JavaPairRDD<String,Long> dataset= inputErrordata.mapToPair(a-> //reduceByKey example
+        {
+            String[] values = a.split(":");
+            String level = values[0];
+            return new Tuple2<>(level,1L);
+        });
+
+        JavaPairRDD<String,Long> reducedDataset =dataset.reduceByKey((a,b)->a+b);
+        reducedDataset.foreach(a-> System.out.println("level:"+ a._1 + " has occurances = "+ a._2));
         sc.close();
 
 
