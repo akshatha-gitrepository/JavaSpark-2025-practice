@@ -1,5 +1,6 @@
 package SparkCourse;
 
+import com.google.common.collect.Iterables;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -53,8 +54,20 @@ public class RddExample {
 
         JavaPairRDD<String,Long> reducedDataset =dataset.reduceByKey((a,b)->a+b);
         reducedDataset.foreach(a-> System.out.println("level:"+ a._1 + " has occurances = "+ a._2));
-        sc.close();
 
+
+     //Fluent api
+
+        sc.parallelize(errorData)
+                .mapToPair(a-> new Tuple2<>((a.split(":")[0]),1L))
+                .reduceByKey((a,b)->a+b).foreach(a-> System.out.println("level: "+a._1 +"has instances :"+a._2));
+
+        sc.parallelize(errorData)
+                        .mapToPair(a-> new Tuple2<>(a.split(":")[0],1L))
+                                .groupByKey()
+                                        .foreach(a-> System.out.println("level:"+a._1+"has group of"+ Iterables.size(a._2)+ "occurances" ));
+
+        sc.close();
 
     }
 }
