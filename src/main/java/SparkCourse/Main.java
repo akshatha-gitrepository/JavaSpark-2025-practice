@@ -21,6 +21,7 @@ public class Main {
         JavaRDD<Double> rdd = sparkContext.parallelize(numbers); //creation  of RDD
 
         JavaRDD<Integer> rddSqt = sparkContext.parallelize(sqtNum);
+
         Double res= rdd.reduce((a,b)->a + b);
         List<Double> res1= rddSqt.map((a)->Math.sqrt(a)).collect();
         System.out.println("res1: "+ res1);
