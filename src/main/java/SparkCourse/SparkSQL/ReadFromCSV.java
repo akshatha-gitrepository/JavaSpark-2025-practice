@@ -49,12 +49,11 @@ public class ReadFromCSV {
         //creating in memory data
         List<Row> inmemory = new ArrayList<Row>();
 
-        inmemory.add(RowFactory.create("WARN","16 December 2018"));
-        inmemory.add(RowFactory.create("ERROR","17 December 2018"));
-        inmemory.add(RowFactory.create("INFO","18 December 2018"));
-        inmemory.add(RowFactory.create("DEBUG","19 December 2018"));
-        inmemory.add(RowFactory.create("WARN","20 December 2018"));
-
+        inmemory.add(RowFactory.create("WARN","16 December 2018 10:00:00"));
+        inmemory.add(RowFactory.create("ERROR","17 December 2018 11:30:00"));
+        inmemory.add(RowFactory.create("INFO","18 December 2018 09:15:00"));
+        inmemory.add(RowFactory.create("DEBUG","19 December 2018 14:45:00"));
+        inmemory.add(RowFactory.create("WARN","20 December 2018 16:20:00"));
         StructField[] fields = new StructField[]{
                 new StructField("level", DataTypes.StringType,false, Metadata.empty()),
                 new StructField("datetime", DataTypes.StringType,false,Metadata.empty())
@@ -64,6 +63,11 @@ public class ReadFromCSV {
 
         Dataset<Row> dataset = spark.createDataFrame(inmemory,schema);
         dataset.show();
+        //aggregration and date_foramt
+        dataset.createOrReplaceTempView("logtable");
+        //Dataset<Row> res = spark.sql("select level, count(datetime) from logtable group by level order by level");
+        Dataset<Row> res = spark.sql("select level, date_format(datetime,'yyyy') as month from logtable");
+        res.show();
 
 
 
